@@ -8,8 +8,6 @@ output:
   word_document: default
 ---
 
-## setup
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readr)
@@ -40,8 +38,6 @@ cbb21 <- read_csv("/Users/juliadu//College/UNC SAIL/College Basketball Dataset/c
 # The 2021 data is from 3/15/2021 and will be updated and added to cbb.csv after the tournament
 
 ```
-
-
 
 ```{r, include=FALSE}
 # roughly explore the data
@@ -113,7 +109,6 @@ cbb_all$POSTSEASON[cbb_all$POSTSEASON == '2ND'] <- '2'
 cbb_all$POSTSEASON[cbb_all$POSTSEASON == 'Champions'] <- '1'
 cbb_all$CONF[cbb_all$CONF == 'ind'] <- 'Ind'
 
-unique(cbb_all$CONF)
 cbb_all <- cbb_all %>% 
         rename( "two_P_O" = "2P_O",
                 "two_P_D" = "2P_D",
@@ -128,12 +123,71 @@ cbb_all$POSTSEASON <- as.numeric(cbb_all$POSTSEASON)
 
 ```
 
+```{r,echo=FALSE}
+Variable <- as.vector(c(
+  'YEAR',
+  'TEAM',
+  'SEED',
+  'POSTSEASON',
+  'CONF',
+  'G',
+  'W',
+  'W_ratio',
+  'ADJOE',
+  'ADJDE',
+  'BARTHAG',
+  'EFG_O',
+  'EFG_D',
+  'TOR',
+  'TORD',
+  'ORB',
+  'DRB',
+  'FTR',
+  'FTRD',
+  'two_P_O',
+  'two_P_D',
+  'three_P_O',
+  'three_P_D',
+  'ADJ_T',
+  'WAB')
+)
 
-# 展示dataset，包含每一个变量名以及对于每一个变量的解释(用Kable)
+Definition <- as.vector(c(
+  'Year range from 2013 to 2021 (except 2020)',
+  'The Division I college basketball school',
+  'Seed in the NCAA March Madness Tournament',
+  'Round where the given team was eliminated or where their season ended (68 = First Four, 64 = Round of 64, 32 = Round of 32, 16 = Sweet Sixteen, 8 = Elite Eight, 4 = Final Four, 2 = Runner-up, 1 = Winner of the NCAA March Madness Tournament for that given year)',
+  'The Athletic Conference in which the school participates in (A10 = Atlantic 10, ACC = Atlantic Coast Conference, AE = America East, Amer = American, ASun = ASUN, B10 = Big Ten, B12 = Big 12, BE = Big East, BSky = Big Sky, BSth = Big South, BW = Big West, CAA = Colonial Athletic Association, CUSA = Conference USA, Horz = Horizon League, Ivy = Ivy League, MAAC = Metro Atlantic Athletic Conference, MAC = Mid-American Conference, MEAC = Mid-Eastern Athletic Conference, MVC = Missouri Valley Conference, MWC = Mountain West, NEC = Northeast Conference, OVC = Ohio Valley Conference, P12 = Pac-12, Pat = Patriot League, SB = Sun Belt, SC = Southern Conference, SEC = South Eastern Conference, Slnd = Southland Conference, Sum = Summit League, SWAC = Southwestern Athletic Conference, WAC = Western Athletic Conference, WCC = West Coast Conference)',
+  'Number of games played',
+  'Number of games won',
+  'Number of games played to Number of games won',
+  'Adjusted Offensive Efficiency (An estimate of the offensive efficiency (points scored per 100 possessions) a team would have against the average Division I defense)',
+  'Adjusted Defensive Efficiency (An estimate of the defensive efficiency (points allowed per 100 possessions) a team would have against the average Division I offense)',
+  'Power Rating (Chance of beating an average Division I team)',
+  'Effective Field Goal Percentage Shot',
+  'Effective Field Goal Percentage Allowed',
+  'Turnover Percentage Allowed (Turnover Rate)',
+  'Turnover Percentage Committed (Steal Rate)',
+  'Offensive Rebound Rate',
+  'Offensive Rebound Rate Allowed',
+  'Free Throw Rate (How often the given team shoots Free Throws)',
+  'Free Throw Rate Allowed',
+  'Two-Point Shooting Percentage',
+  'Two-Point Shooting Percentage Allowed',
+  'Three-Point Shooting Percentage',
+  'Three-Point Shooting Percentage Allowed',
+  'Adjusted Tempo (An estimate of the tempo (possessions per 40 minutes) a team would have against the team that wants to play at an average Division I tempo)',
+  'Wins Above Bubble (The bubble refers to the cut off between making the NCAA March Madness Tournament and not making it)')
+)
 
-```{r}
 
-
+data_all <- data.frame(Variable, Definition)
+data_table <- data_all %>%
+  kbl(caption = "Data") %>%
+  kable_classic(full_width = F, html_font = "Cambria") %>% 
+  kable_styling(latex_options = c("striped", "hold_position")) # cell与cell之间自动分行，有分割线
+  
+data_table
 
 ```
 
@@ -145,7 +199,7 @@ cbb_all$POSTSEASON <- as.numeric(cbb_all$POSTSEASON)
 
 For a person who doesn't know much about basketball, the indicators to measure a basketball team's level are the `SEED` at the end of the postseason and the ranking in the finals, the `POSTSEASON` in our dataset. Unfortunately, since we currently don't have the performance data of the postseason (we only have the results), it is nearly impossible to perform the analysis. In this manner, I chose to focus on the `SEED` and wanted to explore the patterns behind it. I counted the total number of teams in each `SEED` from 2013 to 2021 (excluding 2020) and grouped them by `CONF` (Conference). It is worth mentioning that I filtered all the *NA* values because they were not significant. I utilized a *tile plot*, and the numbers on the tile represent the number of teams in the specific `SEED` of a particular `CONF`. For example, the bottom left corner tile demonstrates that *ACC has total 9 teams in Seed 1 from 2013 to 2021 (excluding 2020)*. The darker the color of the tile, the larger the number of teams of the conference in the seed. We know that the team getting *Seed 1* is more competitive than that gets *Seed 2*, and the team getting *Seed 2* is more competitive than that gets *Seed 3*, etc. Thus, conferences with higher basketball levels have more teams in the top seeds, *Seed 1*, *Seed 2*, *Seed 3*, and *Seed 4*, having greater chances of reaching the finals.
 
-```{r, fig.align='center',fig.height=8,fig.width=8, echo=FALSE}
+```{r, fig.align='center',fig.height=8,fig.width=8, echo=FALSE,warning=FALSE}
 # seed跟所在的conference有没有关系？或许存在某个conference占据很多席位的现象？与实力的关系？
 
 cbb_all_1 <- cbb_all %>% 
@@ -462,9 +516,8 @@ The study of game performance as a function of the differences in the final scor
 
 Conversely, only a few studies have analyzed performance in function of a competition phase and never with high-level basketball competition. In fact, most of professional leagues are organized in two phases: firstly, all the teams compete against each other twice in a double round, with the aim of add up victories to classification. Finally, only the top classified teams (usually the best 8 teams of the regular season) play-off for the championship. The qualifying round is organized in such a way that best classified teams compete against the worst classified team and so on in a knockout round the best of three or five games. Thus, winning a game has a different importance: while in the regular season you can lose three games in a row and remain in competition, if you lose two of three, or three of five playoff games in a row you will be eliminated. Sampaio and Janeira (2002) studied Portuguese Professional Basketball League, which is a lower level competition according to the International Basketball Federation (Gómez et al., 2008). They pointed out that in the playoff games there were less ball possessions (71.16) than in the regular season games (74.75). Hence, the game rhythm was slower with a direct impact on the points per game, reducing the final score. There are no more studies inspecting this contrast between regular season and playoff games. Therefore, the aim of the present study was to identify basketball game performance indicators, which best discriminate between winners and losers in regular season and playoff games.
 
-# 做一个Correlation Analysis
 
-To develop the best approach for predicting the `SEED`, we wanted to create effective models that would indicate how the game performance indicators might be used as tools for understanding the patterns. I utilized a scatterplot to display the correlation of `SEED` and all the game performance indicators variables as follows:
+To develop the best approach for predicting the `SEED`, we wanted to create effective models that would indicate how the game performance indicators might be used to understand the patterns. Therefore, I calculated the correlation coefficients (r) of `SEED` and all the game performance indicators variables and utilized a scatterplot to display them as follows:
 
 ```{r,echo=FALSE}
 library(DT)
@@ -498,33 +551,36 @@ ggplot(cbb_corr_df_arg, aes(performance, correlation)) +
   theme(axis.text.x=element_text(angle=60,vjust=0.5)) +
   scale_y_continuous(breaks=seq(-1,1,0.25)) 
 
-cbb_corr_df %>%
-  kbl() %>%
-  kable_styling()
+#cbb_corr_df %>%
+#  kbl() %>%
+#  kable_styling()
 
 # 增加y轴的范围，0-1
 # 可以考虑一下只画seed和所有变量的关系，重点关注seed和postseason的关系
 # knit之后效果不好，需要调整；或许还是采取之前的策略
+# 主要关注点在seed(主要是想通过regular season的数据来预测seed)和postseason(探究seed和postseason的关系)上！
+
+
+# positively correlated: seed and postseason (r= 0.620798514), seed and ADJDE (r= 0.697441023), EFG_D (r= 0.38708232), two_P_D (r= 0.38995196) 
+# negatively correlated: seed and WAB (r= -0.918860161强相关), seed and BARTHAG (r= -0.826583963强相关), seed and ADJOE (r= -0.745242957), seed and W (r= -0.649496188), G (r= -0.58732506) ,W_ratio (r= -0.49766516)
 
 ```
 
-年份(year)那一行/最下面的一行，颜色特别淡，说明year和其他的数据几乎是independent的关系(no correlation)
-主要关注点在seed(主要是想通过regular season的数据来预测seed)和postseason(探究seed和postseason的关系)上！
+On the scatterplot, certain points draw my attention:
 
-positively correlated: seed and postseason (r= 0.620798514), seed and ADJDE (r= 0.697441023), EFG_D (r= 0.38708232), two_P_D (r= 0.38995196)
+The variables strongly positively correlated to `SEED`: `ADJDE` (r= 0.697441023) and `POSTSEASON` (r= 0.62079851). 
 
-negatively correlated: seed and WAB (r= -0.918860161强相关), seed and BARTHAG (r= -0.826583963强相关), seed and ADJOE (r= -0.745242957), seed and W (r= -0.649496188), G (r= -0.58732506) ,W_ratio (r= -0.49766516)
+The variables strongly negatively correlated to `SEED`: `WAB` (r= -0.918860161), `BARTHAG` (r= -0.826583963), `ADJOE` (r= -0.745242957), and `W` (r= -0.649496188).
 
-First of all, correlation ranges from -1 to 1. It gives us an indication on two things:
+One interesting point is that the correlation coefficient of `SEED` and `YEAR` is -0.002698 (nearly 0, indicating that `YEAR` does not influence which teams get into finals.
 
-The direction of the relationship between the 2 variables
-The strength of the relationship between the 2 variables
+I draw two pink horizontal lines (r= 0.3 and r= -0.3, respectively) on the scatterplot, serving as a watershed between a weak and moderated relationship. Then I will include all the variables whose correlation coefficients are either greater or equal to 0.3 (< 1) or less or equal to -0.3 (> -1), which are `ADJDE`, `EFG_D`, `two_P_D`, `WAB`, `BARTHAG`, `ADJOE`, `W`, `G`, and `W_ratio`, into my model to predict the `SEED` as the modified *full model*. I did not include `POSTSEASON` because it has no influence on the `SEED` variable.
 
-Regarding the strength of the relationship: The more extreme the correlation coefficient (the closer to -1 or 1), the stronger the relationship. This also means that a correlation close to 0 indicates that the two variables are independent, that is, as one variable increases, there is no tendency in the other variable to either decrease or increase.
+I created 4 models for testing. The first model was empty and relied purely on the average `SEED` from 2013 to 2021 except 2020. The next model contained all predictors (all the game performance indicators). Using the *Both-direction Stepwise Model Selection* method on the full model, our third model picked the best predictors using AIC (AIC=346.59). Likewise, the last model was chosen from the modified *full model* mentioned above using the *Both-direction Stepwise Model Selection* method based on the AIC (AIC=334.78). The third model is -6.44869443+ -0.82091537* `WAB` + 8.24557772* `W_ratio` + 0.17145355* `two_P_D` + 15.13874804* `BARTHAG` + -0.30972253* `ADJOE` + 0.36305352* `ADJDE` + -0.07591390* `ADJ_T` + 0.03701627* `FTRD` + -0.13172055* `EFG_D`, while the last model is -4.33766090 + -0.82986380* `WAB` + 7.99275351* `W_ratio` + -0.07521933* `G` + -0.29202360* `ADJOE` + 14.16200872* `BARTHAG` + 0.33506762* `ADJDE`.
 
-## Modeling
+I did *Cross-Validation* on the original dataset, splitting the data into the training dataset and testing dataset with the ratio of 0.8:0.2. I built the models based on the training dataset and measured each model using mean average error (MAE) on the testing dataset. The results are shown in the table below:
 
-```{r,echo=FALSE}
+```{r,echo=FALSE,warning=FALSE}
 # set.seed()
 # train data
 # test data
@@ -545,33 +601,36 @@ random_sample <- createDataPartition(cbb_model$SEED,
 training_dataset  <- cbb_model[random_sample, ]
 # generating testing dataset from rows which are not included in random_sample
 testing_dataset <- cbb_model[-random_sample, ]
+
 # Building the model
-model <- lm(SEED ~., data = training_dataset)
+model_empty <- lm(SEED ~ 1, data = training_dataset)
 # Predicting the target variable
-predictions <- predict(model, testing_dataset)
+predictions <- predict(model_empty, testing_dataset)
 # Computing model performance metrics
-data.frame( R2 = R2(predictions, testing_dataset$SEED),
+metrics_empty <- data.frame( R2 = R2(predictions, testing_dataset$SEED),
+            RMSE = RMSE(predictions, testing_dataset$SEED),
+            MAE = MAE(predictions, testing_dataset$SEED))
+
+# Building the model
+model_full <- lm(SEED ~., data = training_dataset)
+# Predicting the target variable
+predictions <- predict(model_full, testing_dataset)
+# Computing model performance metrics
+metrics_full <- data.frame( R2 = R2(predictions, testing_dataset$SEED),
             RMSE = RMSE(predictions, testing_dataset$SEED),
             MAE = MAE(predictions, testing_dataset$SEED))
 
 # K-fold Cross-Validation
-train_control <- trainControl(method = "cv",
-                              number = 10)
-model <- train(SEED ~., data = cbb_model,
-               method = "lm",
-               trControl = train_control)
-print(model)
+# train_control <- trainControl(method = "cv",
+#                              number = 10)
+#model <- train(SEED ~., data = cbb_model,
+#               method = "lm",
+#               trControl = train_control)
+#print(model)
 
 ```
 
-Stepwise Regression in R
-找更多model分析，用k-fold cross validation计算RMSE, Rsquared, MAE
-
-positively correlated: seed and postseason (r= 0.620798514), seed and ADJDE (r= 0.697441023), seed and EFG_D (r= 0.38708232), seed and two_P_D (r= 0.38995196)
-
-negatively correlated: seed and WAB (r= -0.918860161强相关), seed and BARTHAG (r= -0.826583963强相关), seed and ADJOE (r= -0.745242957), seed and W (r= -0.649496188), seed and G (r= -0.58732506) , seed and W_ratio (r= -0.49766516)
-
-```{r}
+```{r,fig.align='center',fig.width=8,fig.height=8,echo=FALSE}
 cbb_train_1 <- subset(training_dataset, select = c(SEED,G,W,W_ratio,ADJOE,ADJDE,BARTHAG,EFG_D,two_P_O,WAB))
 cbb_train_2 <- subset(training_dataset, select = -c(YEAR,POSTSEASON))
 
@@ -580,75 +639,98 @@ intercept_only_1 <- lm(SEED ~ 1, data= cbb_train_1)
 #define model with all predictors
 all_1 <- lm(SEED ~ ., data= cbb_train_1)
 #perform backward stepwise regression
-model_both_1 <- step(intercept_only_1, direction='both', scope=formula(all_1), trace=1)
+model_both_1 <- step(intercept_only_1, direction='both', scope=formula(all_1), trace=0) #表现最好的model(analysis中的最后一个model)
 #view results of backward stepwise regression
-model_both_1$anova
+#model_both_1$anova
 #view final model
-model_both_1$coefficients
+# model_both_1$coefficients
 
 #define intercept-only model
 intercept_only_2 <- lm(SEED ~ 1, data= cbb_train_2)
 #define model with all predictors
 all_2 <- lm(SEED ~ ., data= cbb_train_2)
 #perform backward stepwise regression
-model_both_2 <- step(intercept_only_2, direction='both', scope=formula(all_2), trace=1)
+model_both_2 <- step(intercept_only_2, direction='both', scope=formula(all_2), trace=0) #表现第二好的model(analysis中的第三个model)
 #view results of backward stepwise regression
-model_both_2$anova
+#model_both_2$anova
 #view final model
-model_both_2$coefficients
+#model_both_2$coefficients
 
 # Predicting the target variable
 predictions_1 <- predict(model_both_1, testing_dataset)
 # Computing model performance metrics
-data.frame( R2 = R2(predictions_1, testing_dataset$SEED),
+metrics_both_1 <- data.frame( R2 = R2(predictions_1, testing_dataset$SEED),
             RMSE = RMSE(predictions_1, testing_dataset$SEED),
             MAE = MAE(predictions_1, testing_dataset$SEED))
 
 # Predicting the target variable
 predictions_2 <- predict(model_both_2, testing_dataset)
 # Computing model performance metrics
-data.frame( R2 = R2(predictions_2, testing_dataset$SEED),
+metrics_both_2 <- data.frame( R2 = R2(predictions_2, testing_dataset$SEED),
             RMSE = RMSE(predictions_2, testing_dataset$SEED),
             MAE = MAE(predictions_2, testing_dataset$SEED))
 
+Model<- as.vector(c(
+  'Empty',
+  'Full',
+  'Stepwise_both_1',
+  'Stepwise_both_2')
+)
+
+`Mean_Average_Error`<- as.vector(c(
+round(metrics_empty$MAE,digits=2),
+round(metrics_full$MAE,digits=2),
+round(metrics_both_2$MAE,digits=2),
+round(metrics_both_1$MAE,digits=2))
+)
+
+metrics_all <- data.frame(Model, `Mean_Average_Error`)
+metrics_table <- metrics_all %>%
+  kbl(caption = "Mean Average Error by Model") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+metrics_table
+
+#model_1: SEED ~ -4.33766090 + -0.82986380* WAB + 7.99275351* W_ratio + -0.07521933* G + -0.29202360* ADJOE + 14.16200872* BARTHAG + 0.33506762* ADJDE
+#model_2: SEED~ -6.44869443+ -0.82091537* WAB + 8.24557772* W_ratio + 0.17145355* two_P_D + 15.13874804* BARTHAG + -0.30972253* ADJOE + 0.36305352* ADJDE + -0.07591390* ADJ_T + 0.03701627* FTRD + -0.13172055* EFG_D
+
 ```
 
-按照model performance metrics来看，both_1表现最好，其次是both_2，再是model(full)。
+I notice that the last model is the most successful at minimizing errors in the testing data. For this model, the mean average error (MAE) is the lowest (MAE=1.26) compared to other models. To further compare each model's performance of predicting the `SEED` on the training data, I draw *Predicted vs. Observed* plots as follows:
 
-model_1: SEED ~ -4.33766090 + -0.82986380* WAB + 7.99275351* W_ratio + -0.07521933* G + -0.29202360* ADJOE + 14.16200872* BARTHAG + 0.33506762* ADJDE
-model_2: SEED~ -6.44869443+ -0.82091537* WAB + 8.24557772* W_ratio + 0.17145355* two_P_D + 15.13874804* BARTHAG + -0.30972253* ADJOE + 0.36305352* ADJDE + -0.07591390* ADJ_T + 0.03701627* FTRD + -0.13172055* EFG_D
-
-将test model的数据点绘制在图上，观察是否拟合(可参考STOR320的final paper)。
-
-x-axis observed values
-y-axis predicted values 观察是不是线性相关，加regression line
-residual plot 是否接近0
-
-
-```{r, fig.align='center', fig.height=8, fig.width=8}
+```{r, fig.align='center', fig.height=8, fig.width=8,echo=FALSE}
+#将test model的数据点绘制在图上，观察是否拟合(可参考STOR320的final paper)
 plot_both_1 <- ggplot(testing_dataset, aes(x=predict(model_both_1,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
-  geom_abline(intercept=0, slope=1) +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values') +
+  geom_abline(intercept=0, slope=1,color="red") +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Both-direction Stepwise Selection Model 2)') +
   theme_bw()
 
 plot_both_2 <- ggplot(testing_dataset, aes(x=predict(model_both_2,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
-  geom_abline(intercept=0, slope=1) +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values') +
+  geom_abline(intercept=0, slope=1,color="red") +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Both-direction Stepwise Selection Model 1)') +
   theme_bw()
 
-plot_full <- ggplot(testing_dataset, aes(x=predict(model,newdata = testing_dataset), y= testing_dataset$SEED)) +
+plot_full <- ggplot(testing_dataset, aes(x=predict(model_full,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
-  geom_abline(intercept=0, slope=1) +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values') +
+  geom_abline(intercept=0, slope=1,color="red") +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Full Model)') +
   theme_bw()
 
-grid.arrange(plot_both_1,plot_both_2,plot_full,ncol=2,nrow=2)
+plot_empty <- ggplot(testing_dataset, aes(x=predict(model_empty,newdata = testing_dataset), y= testing_dataset$SEED)) +
+  geom_point() +
+  geom_abline(intercept=0, slope=1,color="red") +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Empty Model)') +
+  theme_bw()
+
+
+grid.arrange(plot_both_1,plot_both_2,plot_full,plot_empty,ncol=2,nrow=2)
 ```
 
+Although the first three plots look somewhat similar, we can roughly identify that the points in the first picture fit the red line (y=x) best, illustrating that the *Both-direction Stepwise Selection Model 2* (the last model mentioned above) performs the best at predicting the future `SEED` based on the existing data. And the model is -4.33766090 + -0.82986380* `WAB` + 7.99275351* `W_ratio` + -0.07521933* `G` + -0.29202360* `ADJOE` + 14.16200872* `BARTHAG` + 0.33506762* `ADJDE`.
 
-Conclusion and Discussion
+
+# Conclusion and Discussion
 
 ```{r}
 
