@@ -40,7 +40,7 @@ cbb21 <- read_csv("/Users/juliadu//College/UNC SAIL/College Basketball Dataset/c
 ```
 
 ```{r, include=FALSE}
-# roughly explore the data
+# roughly explore the data 
 glimpse(cbb)
 unique(cbb$SEED)
 cbb
@@ -59,11 +59,9 @@ length(unique(cbb13$CONF))
 
 # INTRODUCTION
 
-*篮球比赛的广泛性和对于人们的影响之大。
+Basketball has been one of the most popular sports and also one of the most analyzed sports through [notational analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3661887/). As a result, game-related data analyses are very popular among coaches, players, and even sports fans and have been used to improve understanding of basketball game performance.
 
-*所以研究篮球数据的重要性不言而喻。
-
-This paper will focus on solving the two questions related to the two variables stated above: Do the basketball levels differ between `Conferences`? If so, what may cause the differences? And how can we predict a team's `Seed` based on the its existing basketball game performance data of the regular season?
+This paper will focus on solving the two questions related to the two variables in our dataset: Do the basketball levels differ between `Conferences`? If so, what may cause the differences? And how can we predict a team's `Seed` based on its existing basketball game performance data of the regular season?
 
 Our analysis aims to identify the basketball performance indicators which help the team ace in the regular season and assist the coaches in designing targeted training programs, improving teams' competitiveness.
 
@@ -183,14 +181,13 @@ Definition <- as.vector(c(
 
 data_all <- data.frame(Variable, Definition)
 data_table <- data_all %>%
-  kbl(caption = "Data") %>%
+  kbl(caption = "College Basketball Dataset") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% 
   kable_styling(latex_options = c("striped", "hold_position")) # cell与cell之间自动分行，有分割线
   
 data_table
 
 ```
-
 
 
 # RESULTS
@@ -504,19 +501,6 @@ The distributions of the remaining game performance indicators among conferences
 
 > Question 2: How can we predict a team's `Seed` based on the its existing basketball game performance data of the regular season?
 
-## 寻找影响seed的因素
-
-seed与postseason的关系？
-(需要思考出一种方法量化postseason的排名数据 重要‼️
-
-一些文献依据
-The investigation in this area has been focused, traditionally, on men’s basketball teams (Ibáñez et al., 2003; Trninić et al., 2002). These topics have been widely studied and some important trends have been found: fields goals and defensive rebounds are the game performance indicators that best discriminate between winning and losing teams in basketball (Ibáñez et al., 2003; Ittenbach and Esters, 1995; Karipidis et al., 2001). Sampaio et al. (2010) suggest that winning teams performance is due to the achievement of more opportunities to attempt field-goals and also to the improvement in the decision making of the players of the winning teams as well as a better strategic and tactical environment. More recent studies have been exploring contextual factors such as game location (home and away), game type (regular season and playoff), game final score differences (close, balanced and unbalanced games), players’ gender (men and women), level of competition (Euroleague, National Basketball Association, etc.) and age (senior and junior) to establish better understanding of performance analysis (Lorenzo et al., 2010).
-
-The study of game performance as a function of the differences in the final score of the game is becoming an important variable to consider. Available literature has analyzed categories separately (Sampaio and Janeira, 2003; Gómez et al., 2008). In balanced games (equal or below 12 points) the game performance indicators that discriminated between winners and losers were defensive rebounds (Gómez et al., 2008), missed 3-point field goals (Gómez et al., 2009), field goals percentages and defensive rebounds (Janeira et al., 1996) and in unbalanced games (between 13 and 28 points of final score difference). Sampaio and Janeira (2003) concluded that losing teams performed poorly in all performance indicators. Gómez et al. (2008) found that successful 2 points field-goals, defensive rebounds and assists discriminated between winning and losing teams.
-
-Conversely, only a few studies have analyzed performance in function of a competition phase and never with high-level basketball competition. In fact, most of professional leagues are organized in two phases: firstly, all the teams compete against each other twice in a double round, with the aim of add up victories to classification. Finally, only the top classified teams (usually the best 8 teams of the regular season) play-off for the championship. The qualifying round is organized in such a way that best classified teams compete against the worst classified team and so on in a knockout round the best of three or five games. Thus, winning a game has a different importance: while in the regular season you can lose three games in a row and remain in competition, if you lose two of three, or three of five playoff games in a row you will be eliminated. Sampaio and Janeira (2002) studied Portuguese Professional Basketball League, which is a lower level competition according to the International Basketball Federation (Gómez et al., 2008). They pointed out that in the playoff games there were less ball possessions (71.16) than in the regular season games (74.75). Hence, the game rhythm was slower with a direct impact on the points per game, reducing the final score. There are no more studies inspecting this contrast between regular season and playoff games. Therefore, the aim of the present study was to identify basketball game performance indicators, which best discriminate between winners and losers in regular season and playoff games.
-
-
 To develop the best approach for predicting the `SEED`, we wanted to create effective models that would indicate how the game performance indicators might be used to understand the patterns. Therefore, I calculated the correlation coefficients (r) of `SEED` and all the game performance indicators variables and utilized a scatterplot to display them as follows:
 
 ```{r,echo=FALSE}
@@ -702,25 +686,25 @@ I notice that the last model is the most successful at minimizing errors in the 
 plot_both_1 <- ggplot(testing_dataset, aes(x=predict(model_both_1,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
   geom_abline(intercept=0, slope=1,color="red") +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Both-direction Stepwise Selection Model 2)') +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs Actual (Stepwise Model 2)') +
   theme_bw()
 
 plot_both_2 <- ggplot(testing_dataset, aes(x=predict(model_both_2,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
   geom_abline(intercept=0, slope=1,color="red") +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Both-direction Stepwise Selection Model 1)') +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs Actual (Stepwise Model 1)') +
   theme_bw()
 
 plot_full <- ggplot(testing_dataset, aes(x=predict(model_full,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
   geom_abline(intercept=0, slope=1,color="red") +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Full Model)') +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs Actual (Full Model)') +
   theme_bw()
 
 plot_empty <- ggplot(testing_dataset, aes(x=predict(model_empty,newdata = testing_dataset), y= testing_dataset$SEED)) +
   geom_point() +
   geom_abline(intercept=0, slope=1,color="red") +
-  labs(x='Predicted Values', y='Actual Values', title='Predicted vs. Actual Values (Empty Model)') +
+  labs(x='Predicted Values', y='Actual Values', title='Predicted vs Actual (Empty Model)') +
   theme_bw()
 
 
@@ -730,13 +714,17 @@ grid.arrange(plot_both_1,plot_both_2,plot_full,plot_empty,ncol=2,nrow=2)
 Although the first three plots look somewhat similar, we can roughly identify that the points in the first picture fit the red line (y=x) best, illustrating that the *Both-direction Stepwise Selection Model 2* (the last model mentioned above) performs the best at predicting the future `SEED` based on the existing data. And the model is -4.33766090 + -0.82986380* `WAB` + 7.99275351* `W_ratio` + -0.07521933* `G` + -0.29202360* `ADJOE` + 14.16200872* `BARTHAG` + 0.33506762* `ADJDE`.
 
 
-# Conclusion and Discussion
+# Conclusion
 
-```{r}
+We have found that the basketball levels differ between conferences. Conferences like ACC, B10, B12, and BE have the strongest teams in the country, which are advantageous for making it to March Madness. However, conferences MEAC, NEC, SWAC, and GWC are in unfavorable situations. According to the results, the differences between conferences may be due to performance indicators such as Adjusted Offensive Efficiency, Adjusted Defensive Efficiency, Two-Point Shooting Percentage, Two-Point Shooting Percentage Allowed, Turnover Percentage Committed (Steal Rate), Offensive Rebound Rate Allowed, and Free Throw Rate Allowed. More data and analysis are required to explore which performance indicators are the primary influencing factors.
 
+Additionally, we built a model to predict the *Seed*. The model indicates that `WAB`, `W_ratio`, `G`, `ADJOE`, `BARTHAG`, and `ADJDE` are the most important predictors. In practical applications, these results may help coaches to design training programs more accurately, taking into account the importance of Adjusted Offensive Efficiency and Adjusted Defensive Efficiency, and help the team reach a higher probability of breaking into the finals.
+
+
+
+```{r,echo=FALSE}
 
 ```
-
 
 
 
